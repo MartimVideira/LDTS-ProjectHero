@@ -1,7 +1,10 @@
 plugins {
     id 'java'
+    id 'application'
 }
-
+application{
+    mainClass.set("Application")
+}
 group 'com.martim.hero'
 version '1.0-SNAPSHOT'
 
@@ -12,6 +15,11 @@ repositories {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    //WHen adding depenncies need to set them in here
+    implementation group : 'com.googlecode.lanterna',
+    name: 'lanterna', version: '3.1.1'
+
+
 }
 
 test {
