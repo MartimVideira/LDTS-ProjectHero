@@ -1,9 +1,26 @@
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.screen.Screen;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 public class Hero {
     private Position position;
-    private String representation = "(｡◕‿◕｡)";
+    private String representation1 = "(｡◕‿◕｡)";
+
 
     public Hero(int x, int y){
         this.position = new Position(x,y);
@@ -32,8 +49,8 @@ public class Hero {
     public Position moveRight() {return new Position(position.getX() +1, position.getY());}
 
     public void draw(Screen screen){
-        for(int i = 0 ; i < this.representation.length() ; i++)
-            screen.setCharacter(position.getX() +i,position.getY(), TextCharacter.fromCharacter(this.representation.charAt(i))[0]);
+        for(int i = 0 ; i < this.representation1.length() ; i++)
+            screen.setCharacter(position.getX() +i,position.getY(), TextCharacter.fromCharacter(this.representation1.charAt(i))[0]);
 
     }
 

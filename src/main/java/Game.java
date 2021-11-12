@@ -8,10 +8,11 @@ import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 
 import java.io.IOException;
+import java.security.Key;
 
 public class Game {
     private Screen screen;
-    private Hero hero;
+    private Arena arena;
     private Terminal terminal;
 
     public Game() {
@@ -26,7 +27,7 @@ public class Game {
             screen.startScreen();
             screen.doResizeIfNecessary();
 
-            this.hero = new Hero(10,10);
+            this.arena= new Arena(10,10);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -42,47 +43,20 @@ public class Game {
         screen.refresh();
     }
     private void draw() throws IOException{
-        screen.clear();
-        this.hero.draw(this.screen);
-        screen.refresh();
+        this.screen.clear();
+        this.arena.draw();
+        this.screen.refresh();
 
     }
-    private void moveHero(Position pos) {this.hero.setPosition(pos);}
 
-    private boolean processKey(KeyStroke key){
+    public boolean processKey(KeyStroke key){
         if( (key.getKeyType()== KeyType.Character && key.getCharacter()=='q') ||key.getKeyType() == KeyType.EOF)
             return false;
-        else if(key.getKeyType() == KeyType.Character){
-            char key_char = key.getCharacter();
-            switch(key_char){
-                //Left
-                case 'h':
-                case 'H':
-                    moveHero(this.hero.moveLeft());
-                    return true;
-                //Right
-                case 'l':
-                case 'L':
-                   moveHero(this.hero.moveRight());
-                    return true;
-                //Down
-                case 'j':
-                case 'J':
-                    moveHero(this.hero.moveDown());
-                    return true;
-                //UP
-                case 'k':
-                case 'K':
-                    moveHero(this.hero.moveUp());
-                    return true;
-                default:
-                    return false;
-            }
-        }
-        return false;
-
-
+        arena.processKey(key);
+        return true;
     }
+
+
     public void run(){
         boolean running = true;
         KeyStroke key;
