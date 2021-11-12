@@ -11,9 +11,8 @@ import java.io.IOException;
 
 public class Game {
     private Screen screen;
-    Terminal terminal;
-    private int x =10;
-    private int y = 10;
+    private Hero hero;
+    private Terminal terminal;
 
     public Game() {
         try {
@@ -26,6 +25,8 @@ public class Game {
 
             screen.startScreen();
             screen.doResizeIfNecessary();
+
+            this.hero = new Hero(10,10);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -42,38 +43,41 @@ public class Game {
     }
     private void draw() throws IOException{
         screen.clear();
-        screen.setCharacter(x,y,TextCharacter.fromCharacter('X')[0]);
+        this.hero.draw(this.screen);
         screen.refresh();
 
     }
-    private void processKey(KeyStroke key){
-        if(key.getKeyType() == KeyType.Character){
+    private boolean processKey(KeyStroke key){
+        if( (key.getKeyType()== KeyType.Character && key.getCharacter()=='q') ||key.getKeyType() == KeyType.EOF)
+            return false;
+        else if(key.getKeyType() == KeyType.Character){
             char key_char = key.getCharacter();
             switch(key_char){
                 //Left
                 case 'h':
                 case 'H':
-                    x--;
-                    break;
+                    this.hero.moveLeft();
+                    return true;
                 //Right
                 case 'l':
                 case 'L':
-                    x++;
-                    break;
+                   this.hero.moveRight();
+                    return true;
                 //Down
                 case 'j':
                 case 'J':
-                    y++;
-                    break;
+                    this.hero.moveDown();
+                    return true;
                 //UP
                 case 'k':
                 case 'K':
-                    y--;
-                    break;
+                    this.hero.moveUp();
+                    return true;
                 default:
-                    break;
+                    return false;
             }
         }
+        return false;
 
 
     }
@@ -85,13 +89,11 @@ public class Game {
             try{
                 draw();
                 key = screen.readInput();
-                System.out.println(key.getKeyType());
-                if((key.getKeyType() == KeyType.Character && key.getCharacter() == 'q')|| key.getKeyType() == KeyType.EOF){
+                if(!processKey(key)){
                     running = false;
                     screen.close();
+                    System.out.println("Happy to serve you sir!");
                 }
-                else
-                    processKey(key);
             }catch (IOException e){
                 e.printStackTrace();
             }

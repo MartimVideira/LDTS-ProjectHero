@@ -18,7 +18,7 @@ public class Hero {
 
     public int getY(){return this.y;}
 
-    public void moveUP() { this.y--;}
+    public void moveUp() { this.y--;}
 
     public void moveDown(){this.y++;}
 
@@ -28,7 +28,7 @@ public class Hero {
 
     public void draw(Screen screen){
         for(int i = 0 ; i < this.representation.length() ; i++)
-            screen.setCharacter(this.x,this.y, TextCharacter.fromCharacter(this.representation.charAt(i))[0]);
+            screen.setCharacter(this.x+i,this.y, TextCharacter.fromCharacter(this.representation.charAt(i))[0]);
 
     }
 
