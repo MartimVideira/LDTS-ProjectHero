@@ -47,6 +47,8 @@ public class Game {
         screen.refresh();
 
     }
+    private void moveHero(Position pos) {this.hero.setPosition(pos);}
+
     private boolean processKey(KeyStroke key){
         if( (key.getKeyType()== KeyType.Character && key.getCharacter()=='q') ||key.getKeyType() == KeyType.EOF)
             return false;
@@ -56,22 +58,22 @@ public class Game {
                 //Left
                 case 'h':
                 case 'H':
-                    this.hero.moveLeft();
+                    moveHero(this.hero.moveLeft());
                     return true;
                 //Right
                 case 'l':
                 case 'L':
-                   this.hero.moveRight();
+                   moveHero(this.hero.moveRight());
                     return true;
                 //Down
                 case 'j':
                 case 'J':
-                    this.hero.moveDown();
+                    moveHero(this.hero.moveDown());
                     return true;
                 //UP
                 case 'k':
                 case 'K':
-                    this.hero.moveUp();
+                    moveHero(this.hero.moveUp());
                     return true;
                 default:
                     return false;
