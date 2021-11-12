@@ -47,8 +47,6 @@ public class Game {
 
     }
     private void processKey(KeyStroke key){
-
-        //H  left
         if(key.getKeyType() == KeyType.Character){
             char key_char = key.getCharacter();
             switch(key_char){
@@ -87,7 +85,13 @@ public class Game {
             try{
                 draw();
                 key = screen.readInput();
-                processKey(key);
+                System.out.println(key.getKeyType());
+                if((key.getKeyType() == KeyType.Character && key.getCharacter() == 'q')|| key.getKeyType() == KeyType.EOF){
+                    running = false;
+                    screen.close();
+                }
+                else
+                    processKey(key);
             }catch (IOException e){
                 e.printStackTrace();
             }
