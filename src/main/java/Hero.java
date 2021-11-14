@@ -8,6 +8,7 @@ import com.googlecode.lanterna.screen.Screen;
 
 public class Hero extends Element {
     private String representation1 = "(｡◕‿◕｡)";
+    private String representation2 = "";
     private String color = "#FFFF33";
 
 

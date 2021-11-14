@@ -13,6 +13,7 @@ public class Coin extends Element{
         graphics.setForegroundColor(TextColor.Factory.fromString(this.color));
         graphics.enableModifiers(SGR.BLINK);
         graphics.putString(new TerminalPosition(this.position.getX(),this.position.getY()),this.representation);
+        graphics.disableModifiers(SGR.BLINK);
 
     }
 

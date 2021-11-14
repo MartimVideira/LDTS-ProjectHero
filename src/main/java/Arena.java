@@ -19,12 +19,14 @@ public class Arena {
     private Hero hero;
     private List<Wall> walls;
     private List<Coin> coins;
+    private List<Monster> monsters;
 
     public Arena(int width ,int height){
         this.width=width; this.height = height;
         this.hero = new Hero(10,10);
         this.walls = createWalls();
         this.coins = createCoins();
+        this.monsters = createMonsters();
     }
     private boolean canHeroMove(Position pos){
         //Verifying if first character of player colides with a wall or the last colides with the wall
@@ -72,9 +74,31 @@ public class Arena {
             if(positions.contains(p))
                 continue;
             coins.add(new Coin(p.getX(),p.getY()));
+            positions.add(p);
             counter++;
         }
         return coins;
+    }
+    //ALterar o modo como obtenho a representacao
+    public List<Monster> createMonsters(){
+        List<Monster> m = new ArrayList<>();
+        List<Position> positions = new ArrayList<>();
+        for(int i = 0 ;i < hero.getRepresentation().length(); i++)
+            positions.add(new Position(hero.getPosition().getX() +i,hero.getPosition().getY()));
+        Random random = new Random();
+        int numberOfMonsters = 40;
+        int counter = 0;
+        while(counter < numberOfMonsters){
+            Position p  = new Position(random.nextInt(width-1-new Monster(0,0).getRepresentation().length())+1, random.nextInt(height-2)+1 );
+            if(positions.contains(p))
+                continue;
+            Monster currentMonster = new Monster(p.getX(),p.getY());
+            m.add(currentMonster);
+            positions.addAll(currentMonster.ocupiedPositions());
+            counter++;
+        }
+        return m;
+
     }
     private void retrieveCoins(){
         Position p = this.hero.getPosition();
@@ -95,6 +119,8 @@ public class Arena {
             wall.draw(graphics);
         for(Coin coin : coins)
             coin.draw(graphics);
+        for(Monster monster : monsters)
+            monster.draw(graphics);
     }
     public void processKey(KeyStroke key){
         if(key.getKeyType() == KeyType.Character){

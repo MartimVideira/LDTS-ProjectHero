@@ -9,5 +9,5 @@ public abstract class Element {
     public  Position getPosition(){return this.position;}
 
     public abstract  void draw(TextGraphics graphics);
-    
+
 }
