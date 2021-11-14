@@ -1,4 +1,8 @@
+import com.googlecode.lanterna.SGR;
+import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.screen.Screen;
 
 
@@ -20,6 +24,7 @@ import com.googlecode.lanterna.screen.Screen;
 public class Hero {
     private Position position;
     private String representation1 = "(｡◕‿◕｡)";
+    private String color = "#FFFF33";
 
 
     public Hero(int x, int y){
@@ -48,10 +53,11 @@ public class Hero {
 
     public Position moveRight() {return new Position(position.getX() +1, position.getY());}
 
-    public void draw(Screen screen){
-        for(int i = 0 ; i < this.representation1.length() ; i++)
-            screen.setCharacter(position.getX() +i,position.getY(), TextCharacter.fromCharacter(this.representation1.charAt(i))[0]);
+    public String getRepresentation() {return this.representation1;}
 
+    public void draw(TextGraphics graphics) {
+        graphics.setForegroundColor(TextColor.Factory.fromString(this.color));
+        graphics.enableModifiers(SGR.BOLD);
+        graphics.putString(new TerminalPosition(this.position.getX(),this.position.getY()),this.representation1);
     }
-
 }

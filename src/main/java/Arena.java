@@ -1,5 +1,13 @@
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.screen.Screen;
+
+import java.io.IOException;
 
 public class Arena {
 
@@ -11,10 +19,21 @@ public class Arena {
         this.width=width; this.height = height;
         this.hero = new Hero(10,10);
     }
-    private void moveHero(Position pos) {
+    private boolean canHeroMove(Position pos){
+        return  (pos.getX()+this.hero.getRepresentation().length()) <this.width && pos.getY() < this.height && pos.getX()> 0 && pos.getY()> 0;
+    }
+    public void moveHero(Position pos) {
+        if(canHeroMove(pos))
+                this.hero.setPosition(pos);
+        else
+            System.out.println("Couldn't move there!!");
+    }
 
-        this.hero.setPosition(pos);}
-
+    public void draw(TextGraphics graphics ) throws IOException {
+        graphics.setBackgroundColor(TextColor.Factory.fromString("#336699"));
+        graphics.fillRectangle(new TerminalPosition(0, 0), new TerminalSize(this.width, this.height), ' ');
+        this.hero.draw(graphics);
+    }
     public void processKey(KeyStroke key){
         if(key.getKeyType() == KeyType.Character){
             char key_char = key.getCharacter();

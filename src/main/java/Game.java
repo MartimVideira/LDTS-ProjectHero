@@ -27,7 +27,7 @@ public class Game {
             screen.startScreen();
             screen.doResizeIfNecessary();
 
-            this.arena= new Arena(10,10);
+            this.arena= new Arena(30,30);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -44,7 +44,7 @@ public class Game {
     }
     private void draw() throws IOException{
         this.screen.clear();
-        this.arena.draw();
+        this.arena.draw(this.screen.newTextGraphics());
         this.screen.refresh();
 
     }
