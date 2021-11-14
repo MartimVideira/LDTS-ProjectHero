@@ -27,7 +27,7 @@ public class Arena {
         //Verifying if first character of player colides with a wall or the last colides with the wall
         //This won´t work if theres walls  inside the arena
         for(Wall wall : walls)
-            if(pos.equals(wall.getPosition()) || new Position(pos.getX() +this.hero.getRepresentation().length(), pos.getY()).equals(wall.getPosition()))
+            if(pos.equals(wall.getPosition()) || new Position(pos.getX() +this.hero.getRepresentation().length()-1, pos.getY()).equals(wall.getPosition()))
                 return false;
 
 
