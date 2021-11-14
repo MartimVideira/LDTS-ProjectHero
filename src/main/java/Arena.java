@@ -8,19 +8,30 @@ import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Arena {
 
     private int width;
     private int height;
     private Hero hero;
+    private List<Wall> walls;
 
     public Arena(int width ,int height){
         this.width=width; this.height = height;
         this.hero = new Hero(10,10);
+        this.walls = createWalls();
     }
     private boolean canHeroMove(Position pos){
-        return  (pos.getX()+this.hero.getRepresentation().length()) <this.width && pos.getY() < this.height && pos.getX()> 0 && pos.getY()> 0;
+        //Verifying if first character of player colides with a wall or the last colides with the wall
+        //This won´t work if theres walls  inside the arena
+        for(Wall wall : walls)
+            if(pos.equals(wall.getPosition()) || new Position(pos.getX() +this.hero.getRepresentation().length(), pos.getY()).equals(wall.getPosition()))
+                return false;
+
+
+        return true;
     }
     public void moveHero(Position pos) {
         if(canHeroMove(pos))
@@ -28,11 +39,28 @@ public class Arena {
         else
             System.out.println("Couldn't move there!!");
     }
+    private List<Wall> createWalls() {
+        List<Wall> walls = new ArrayList<>();
+
+        //TOP and BOTTOM
+        for (int c= 0; c< this.width ; c++){
+            walls.add(new Wall(c,0));
+            walls.add(new Wall(c,height));
+        }
+        for(int r = 0 ;r < this.height ; r++){
+            walls.add(new Wall(0,r));
+            walls.add(new Wall(this.width-1,r));
+        }
+
+        return walls;
+    }
 
     public void draw(TextGraphics graphics ) throws IOException {
         graphics.setBackgroundColor(TextColor.Factory.fromString("#336699"));
         graphics.fillRectangle(new TerminalPosition(0, 0), new TerminalSize(this.width, this.height), ' ');
         this.hero.draw(graphics);
+        for(Wall wall : walls)
+            wall.draw(graphics);
     }
     public void processKey(KeyStroke key){
         if(key.getKeyType() == KeyType.Character){
