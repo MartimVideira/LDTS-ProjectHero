@@ -10,6 +10,7 @@ import com.googlecode.lanterna.screen.Screen;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Arena {
 
@@ -17,11 +18,13 @@ public class Arena {
     private int height;
     private Hero hero;
     private List<Wall> walls;
+    private List<Coin> coins;
 
     public Arena(int width ,int height){
         this.width=width; this.height = height;
         this.hero = new Hero(10,10);
         this.walls = createWalls();
+        this.coins = createCoins();
     }
     private boolean canHeroMove(Position pos){
         //Verifying if first character of player colides with a wall or the last colides with the wall
@@ -55,12 +58,32 @@ public class Arena {
         return walls;
     }
 
+    private List<Coin> createCoins(){
+        List<Coin> coins = new ArrayList<>();
+        List<Position> positions = new ArrayList<>();
+        for(int i = 0 ;i < hero.getRepresentation().length(); i++)
+            positions.add(new Position(hero.getPosition().getX() +i,hero.getPosition().getY()));
+        Random random = new Random();
+        int numberOfCoins = 20;
+        int counter = 0;
+        while(counter < numberOfCoins){
+            Position p  = new Position(random.nextInt(width-2)+1, random.nextInt(height-2)+1 );
+            if(positions.contains(p))
+                continue;
+            coins.add(new Coin(p.getX(),p.getY()));
+            counter++;
+        }
+        return coins;
+    }
+
     public void draw(TextGraphics graphics ) throws IOException {
         graphics.setBackgroundColor(TextColor.Factory.fromString("#336699"));
         graphics.fillRectangle(new TerminalPosition(0, 0), new TerminalSize(this.width, this.height), ' ');
         this.hero.draw(graphics);
         for(Wall wall : walls)
             wall.draw(graphics);
+        for(Coin coin : coins)
+            coin.draw(graphics);
     }
     public void processKey(KeyStroke key){
         if(key.getKeyType() == KeyType.Character){
