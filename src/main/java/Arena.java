@@ -32,13 +32,14 @@ public class Arena {
         for(Wall wall : walls)
             if(pos.equals(wall.getPosition()) || new Position(pos.getX() +this.hero.getRepresentation().length()-1, pos.getY()).equals(wall.getPosition()))
                 return false;
-
-
         return true;
     }
     public void moveHero(Position pos) {
-        if(canHeroMove(pos))
+        if(canHeroMove(pos)){
                 this.hero.setPosition(pos);
+                retrieveCoins();
+        }
+
         else
             System.out.println("Couldn't move there!!");
     }
@@ -74,6 +75,16 @@ public class Arena {
             counter++;
         }
         return coins;
+    }
+    private void retrieveCoins(){
+        Position p = this.hero.getPosition();
+        for(Coin coin : coins)
+            if(coin.getPosition().equals(p)){
+                coins.remove(coin);
+                break;
+            }
+
+
     }
 
     public void draw(TextGraphics graphics ) throws IOException {
