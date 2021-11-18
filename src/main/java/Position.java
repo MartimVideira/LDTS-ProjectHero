@@ -14,6 +14,7 @@ public class Position {
     public int getX() {return this.x;}
 
     public int getY() {return this.y;}
+    public Position add(Position other){return new Position(x +other.getX(),y + other.getY());}
 
     @Override
     public boolean equals(Object o){

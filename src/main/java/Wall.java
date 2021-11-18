@@ -3,9 +3,8 @@ import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 
 public class Wall extends Element{
-    private String representation = "#";
     private String color = "#000000";
-    public Wall(int x, int y){super(x,y);}
+    public Wall(int x, int y){super(x,y);this.representation="#";}
 
     @Override
     public void draw(TextGraphics graphics){

@@ -28,22 +28,71 @@ public class Arena {
         this.coins = createCoins();
         this.monsters = createMonsters();
     }
-    private boolean canHeroMove(Position pos){
+    private int canHeroMove(Position pos){
         //Verifying if first character of player colides with a wall or the last colides with the wall
         //This won´t work if theres walls  inside the arena
         for(Wall wall : walls)
             if(pos.equals(wall.getPosition()) || new Position(pos.getX() +this.hero.getRepresentation().length()-1, pos.getY()).equals(wall.getPosition()))
-                return false;
-        return true;
+                return 0;
+        Hero temp =new Hero(pos.getX(), pos.getY());
+        for(Monster monster :monsters){
+            if(monster.colides(temp)){
+                if(monster.isDead()) return 0;
+                else return 2;
+            }
+        }
+            return 1;
     }
-    public void moveHero(Position pos) {
-        if(canHeroMove(pos)){
+    public int moveHero(Position pos) {
+        int heromoveResult = canHeroMove(pos);
+        //Can Move
+        if(heromoveResult == 1){
                 this.hero.setPosition(pos);
                 retrieveCoins();
         }
+        //Detect colision with monster;
+        else if(heromoveResult ==2){
+            hero.lost();
+            return 2;
+        }
+        moveMonsters();
+        updateMonsterState();
+        //Check again if a monster killed our hero
 
-        else
-            System.out.println("Couldn't move there!!");
+        return 1;
+    }
+    public boolean canMoveMonster(Position pos){
+        Monster temp = new Monster(pos.getX(), pos.getY());
+        for(Wall w : this.walls)
+            if(w.colides(temp))
+                return false;
+
+        return true;
+    }
+    public void  moveMonsters(){
+        List<Monster> deadMonsters = new ArrayList<>();
+        for(Monster m : this.monsters){
+            if(m.isDead())
+                continue;
+            Position to_move = m.move();
+            if(canMoveMonster(to_move))
+                m.setPosition(to_move);
+
+        }
+    }
+    private void updateMonsterState(){
+        for(Monster m : this.monsters){
+            for(Monster m1 : this.monsters){
+                if(m1==m ||m1.getPosition().getY() != m.getPosition().getY())
+                    continue;
+                if(m1.colides(m)){
+                    m.die();
+                    m1.die();
+                }
+            }
+
+        }
+
     }
     private List<Wall> createWalls() {
         List<Wall> walls = new ArrayList<>();
@@ -67,7 +116,7 @@ public class Arena {
         for(int i = 0 ;i < hero.getRepresentation().length(); i++)
             positions.add(new Position(hero.getPosition().getX() +i,hero.getPosition().getY()));
         Random random = new Random();
-        int numberOfCoins = 20;
+        int numberOfCoins = 50;
         int counter = 0;
         while(counter < numberOfCoins){
             Position p  = new Position(random.nextInt(width-2)+1, random.nextInt(height-2)+1 );
@@ -82,75 +131,87 @@ public class Arena {
     //ALterar o modo como obtenho a representacao
     public List<Monster> createMonsters(){
         List<Monster> m = new ArrayList<>();
-        List<Position> positions = new ArrayList<>();
-        for(int i = 0 ;i < hero.getRepresentation().length(); i++)
-            positions.add(new Position(hero.getPosition().getX() +i,hero.getPosition().getY()));
+
         Random random = new Random();
-        int numberOfMonsters = 40;
+        int numberOfMonsters = 10;
         int counter = 0;
+
         while(counter < numberOfMonsters){
             Position p  = new Position(random.nextInt(width-1-new Monster(0,0).getRepresentation().length())+1, random.nextInt(height-2)+1 );
-            if(positions.contains(p))
-                continue;
             Monster currentMonster = new Monster(p.getX(),p.getY());
+            //Check if candidate monster overlaps with hero or another monster
+            boolean overlap = false;
+            for(Monster monster : m )
+               if(monster.colides(currentMonster)){
+                   overlap = true;
+                   break;
+               }
+            if(this.hero.colides(currentMonster))
+                overlap = true;
+            if(overlap)
+                continue;
             m.add(currentMonster);
-            positions.addAll(currentMonster.ocupiedPositions());
             counter++;
+
         }
         return m;
 
     }
     private void retrieveCoins(){
-        Position p = this.hero.getPosition();
+        List<Coin> coins_to_remove  = new ArrayList<>();
         for(Coin coin : coins)
-            if(coin.getPosition().equals(p)){
-                coins.remove(coin);
-                break;
-            }
+            if(coin.getPosition().getY() ==this.hero.getPosition().getY()){
+                if(coin.colides(this.hero)) {
+                    coins_to_remove.add(coin);
 
+                }
+            }
+        coins.removeAll(coins_to_remove);
 
     }
 
     public void draw(TextGraphics graphics ) throws IOException {
         graphics.setBackgroundColor(TextColor.Factory.fromString("#336699"));
         graphics.fillRectangle(new TerminalPosition(0, 0), new TerminalSize(this.width, this.height), ' ');
-        this.hero.draw(graphics);
+
         for(Wall wall : walls)
             wall.draw(graphics);
         for(Coin coin : coins)
             coin.draw(graphics);
         for(Monster monster : monsters)
             monster.draw(graphics);
+        this.hero.draw(graphics);
     }
-    public void processKey(KeyStroke key){
+    public int processKey(KeyStroke key){
         if(key.getKeyType() == KeyType.Character){
             char key_char = key.getCharacter();
             switch(key_char){
                 //Left
                 case 'h':
                 case 'H':
-                    moveHero(this.hero.moveLeft());
-                    break;
+                    return moveHero(this.hero.moveLeft());
+
                 //Right
                 case 'l':
                 case 'L':
-                    moveHero(this.hero.moveRight());
-                    break;
+                    return moveHero(this.hero.moveRight());
+
                 //Down
                 case 'j':
                 case 'J':
-                    moveHero(this.hero.moveDown());
-                    break;
+                    return moveHero(this.hero.moveDown());
+
                 //UP
                 case 'k':
                 case 'K':
-                    moveHero(this.hero.moveUp());
-                    break;
+                    return moveHero(this.hero.moveUp());
+
                 default:
                     break;
             }
+
         }
-        
+        return  1;
     }
 
 

@@ -49,11 +49,12 @@ public class Game {
 
     }
 
-    public boolean processKey(KeyStroke key){
+    public int processKey(KeyStroke key){
         if( (key.getKeyType()== KeyType.Character && key.getCharacter()=='q') ||key.getKeyType() == KeyType.EOF)
-            return false;
-        arena.processKey(key);
-        return true;
+            return 0;
+
+        return arena.processKey(key);
+
     }
 
 
@@ -65,11 +66,15 @@ public class Game {
             try{
                 draw();
                 key = screen.readInput();
-                if(!processKey(key)){
+                int gameResult = processKey(key);
+                if(gameResult == 0){
                     running = false;
                     screen.close();
                     System.out.println("Happy to serve you sir!");
                 }
+                else if(gameResult == 2)
+                    System.out.println("OUR HERO WAS HIT BY  A MONSTER");
+
             }catch (IOException e){
                 e.printStackTrace();
             }

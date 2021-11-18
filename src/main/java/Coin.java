@@ -5,8 +5,8 @@ import com.googlecode.lanterna.graphics.TextGraphics;
 
 public class Coin extends Element{
     private String color = "#FFFFFF";
-    private String representation ="*";
-    public Coin(int x, int y) {super(x,y);}
+
+    public Coin(int x, int y) {super(x,y);this.representation="*";}
 
     @Override
     public void draw(TextGraphics graphics) {
