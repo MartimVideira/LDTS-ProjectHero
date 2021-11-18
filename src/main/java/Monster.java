@@ -10,6 +10,8 @@ import java.util.Random;
 public class Monster extends Element {
     private String color = "#FF00F0";
     private boolean dead;
+    private boolean disabled;
+    private int disabledTurns;
     private List<Position> movements;
     public Monster() {
         super(0, 0);
@@ -35,16 +37,34 @@ public class Monster extends Element {
 
     }
     public Position  move(){
+        if(this.disabled){
+            this.disabledTurns--;
+            if(this.disabledTurns==0) {
+                this.disabled = false;
+                this.color = "#FF00F0";
+            }
+            return this.position;
+        }
+        else{
         Random random = new Random();
         int movementIndex = random.nextInt(8);
-        return this.position.add(this.movements.get(movementIndex));
+        return this.position.add(this.movements.get(movementIndex));}
+
 
     }
     public boolean isDead(){return this.dead;}
+
+    public boolean isDisabled() {return this.disabled;}
 
     public void die(){
         this.dead =true;
         this.color ="#000000";
         this.representation = "✞";
+    }
+
+    public void disable(){
+        this.disabled = true;
+        this.color = "#FFA500";
+        this.disabledTurns =3;
     }
 }

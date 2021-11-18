@@ -8,7 +8,8 @@ import com.googlecode.lanterna.screen.Screen;
 
 public class Hero extends Element {
 
-    private String color = "#FFFF33";
+    private String color = "#00FF00";
+    private int lives = 3;
 
 
     public Hero(int x, int y){super(x,y);this.representation = "(｡◕‿◕｡)";}
@@ -30,9 +31,22 @@ public class Hero extends Element {
         graphics.enableModifiers(SGR.BOLD);
         graphics.putString(new TerminalPosition(this.position.getX(),this.position.getY()),this.representation);
     }
-    public boolean lost(){
-        this.color = "#FF0000";
-        this.representation ="(._.)";
-        return true;
+    public void gotHit(){
+        this.lives--;
+
+        if(this.lives == 2){
+            this.color = "#FFFF00";
+            this.representation = "(0_0)";
+        }
+        else if(this.lives ==1){
+            this.color = "#FF0000";
+            this.representation ="(._.)";
+        }
+        else if(this.lives ==0){
+            this.color = "#000000";
+            this.representation ="(×_×)";
+
+        }
     }
+    public boolean isDead(){return this.lives ==0;}
 }

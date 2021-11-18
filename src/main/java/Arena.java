@@ -20,13 +20,18 @@ public class Arena {
     private List<Wall> walls;
     private List<Coin> coins;
     private List<Monster> monsters;
+    private int TOTALCOINS;
+    private int TOTALMONSTERS;
 
     public Arena(int width ,int height){
+        this.TOTALCOINS =5;
+        this.TOTALMONSTERS =6;
         this.width=width; this.height = height;
         this.hero = new Hero(10,10);
         this.walls = createWalls();
         this.coins = createCoins();
         this.monsters = createMonsters();
+
     }
     private int canHeroMove(Position pos){
         //Verifying if first character of player colides with a wall or the last colides with the wall
@@ -38,26 +43,52 @@ public class Arena {
         for(Monster monster :monsters){
             if(monster.colides(temp)){
                 if(monster.isDead()) return 0;
-                else return 2;
+                if(monster.isDisabled()) return 1;
+                else{
+                    monster.disable();
+                    return 2;
+                }
             }
         }
             return 1;
     }
     public int moveHero(Position pos) {
+        if(hero.isDead()) return 1;
         int heromoveResult = canHeroMove(pos);
         //Can Move
         if(heromoveResult == 1){
                 this.hero.setPosition(pos);
                 retrieveCoins();
         }
-        //Detect colision with monster;
+        //Detected colision with monster;
         else if(heromoveResult ==2){
-            hero.lost();
-            return 2;
+            this.hero.gotHit();
+            this.hero.setPosition(pos);
+            if(this.hero.isDead())
+                return 2;
+
+
         }
         moveMonsters();
         updateMonsterState();
         //Check again if a monster killed our hero
+        boolean allMonstersDead= true;
+        for(Monster monster : this.monsters) {
+            if (!monster.isDead()) {
+                allMonstersDead = false;
+            }
+            if(monster.isDisabled())
+                continue;
+            if (monster.colides(this.hero)) {
+                this.hero.gotHit();
+                monster.disable();
+                if (this.hero.isDead())
+                    return 2;
+            }
+        }
+        //HERO WINS
+        if(allMonstersDead ||this.coins.size()==0)
+            return 3;
 
         return 1;
     }
@@ -70,7 +101,6 @@ public class Arena {
         return true;
     }
     public void  moveMonsters(){
-        List<Monster> deadMonsters = new ArrayList<>();
         for(Monster m : this.monsters){
             if(m.isDead())
                 continue;
@@ -102,6 +132,7 @@ public class Arena {
             walls.add(new Wall(c,0));
             walls.add(new Wall(c,height));
         }
+        //Sides
         for(int r = 0 ;r < this.height ; r++){
             walls.add(new Wall(0,r));
             walls.add(new Wall(this.width-1,r));
@@ -116,7 +147,7 @@ public class Arena {
         for(int i = 0 ;i < hero.getRepresentation().length(); i++)
             positions.add(new Position(hero.getPosition().getX() +i,hero.getPosition().getY()));
         Random random = new Random();
-        int numberOfCoins = 50;
+        int numberOfCoins = this.TOTALCOINS;
         int counter = 0;
         while(counter < numberOfCoins){
             Position p  = new Position(random.nextInt(width-2)+1, random.nextInt(height-2)+1 );
@@ -133,7 +164,7 @@ public class Arena {
         List<Monster> m = new ArrayList<>();
 
         Random random = new Random();
-        int numberOfMonsters = 10;
+        int numberOfMonsters = this.TOTALMONSTERS;
         int counter = 0;
 
         while(counter < numberOfMonsters){

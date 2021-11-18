@@ -17,7 +17,8 @@ public class Game {
 
     public Game() {
         try {
-            TerminalSize terminalSize = new TerminalSize(200, 200);
+            this.arena= new Arena(30,30);
+            TerminalSize terminalSize = new TerminalSize(30,31);
             DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory().setInitialTerminalSize(terminalSize);
 
             terminal = terminalFactory.createTerminal();
@@ -72,8 +73,15 @@ public class Game {
                     screen.close();
                     System.out.println("Happy to serve you sir!");
                 }
-                else if(gameResult == 2)
-                    System.out.println("OUR HERO WAS HIT BY  A MONSTER");
+                else if(gameResult == 2) {
+                    System.out.println("HERO IS DEAD");
+
+                }
+                else if(gameResult==3){
+                    System.out.println("HERO is VICTORIOUS");
+
+                }
+
 
             }catch (IOException e){
                 e.printStackTrace();
